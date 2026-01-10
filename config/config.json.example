@@ -1,0 +1,23 @@
+{
+  "email": {
+    "to": "destination@example.com",
+    "from": "alerts@example.com",
+    "subjectPrefix": "[StockAlert]"
+  },
+  "smtp": {
+    "host": "smtp.example.com",
+    "port": 587,
+    "username": "alerts@example.com",
+    "password": "CHANGE_ME",
+    "useTLS": true
+  },
+  "monitor": {
+    "pollIntervalSeconds": 180,
+    "cooldownSeconds": 300
+  },
+  "quote": {
+    "provider": "brapi",
+    "token": "",
+    "baseUrl": "https://brapi.dev/api"
+  }
+}
