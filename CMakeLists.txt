@@ -10,10 +10,10 @@ add_executable(stock-quote-alert
     src/config.cpp
     src/monitor.cpp
     src/quoteClient.cpp
+    src/emailClient.cpp
 )
 
 find_package(CURL CONFIG REQUIRED)
-
 target_link_libraries(stock-quote-alert PRIVATE CURL::libcurl)
 
 target_include_directories(stock-quote-alert PRIVATE

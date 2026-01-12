@@ -1,10 +1,12 @@
 #include "monitor.h"
 #include "quoteClient.h"
+#include "emailClient.h"
 
 #include <chrono>
 #include <iostream>
 #include <thread>
 #include <vector>
+#include <string>
 
 void run_monitor_test(const std::string& ticker, double sell_threshold, double buy_threshold, const Config& cfg) {
     // Fake prices just to prove the logic works
@@ -38,13 +40,13 @@ void run_monitor_test(const std::string& ticker, double sell_threshold, double b
     for (double price : prices) {
 
         // Decrease cooldown
-        if (sell_cooldown_left > 0) 
+        if (sell_cooldown_left > 0)
             sell_cooldown_left -= poll;
-        if (buy_cooldown_left > 0) 
+        if (buy_cooldown_left > 0)
             buy_cooldown_left -= poll;
-        if (sell_cooldown_left < 0) 
+        if (sell_cooldown_left < 0)
             sell_cooldown_left = 0;
-        if (buy_cooldown_left < 0) 
+        if (buy_cooldown_left < 0)
             buy_cooldown_left = 0;
 
         if (price > sell_threshold)
@@ -60,15 +62,28 @@ void run_monitor_test(const std::string& ticker, double sell_threshold, double b
         std::cout << "[tick] " << ticker << " price=" << price;
         if (above)
             std::cout << " (above sell)\n";
-        else if 
-            (below) std::cout << " (below buy)\n";
-        else 
+        else if (below)
+            std::cout << " (below buy)\n";
+        else
             std::cout << " (between)\n";
 
         // Alert logic
         if (!was_above && above) {
             if (sell_cooldown_left == 0) {
                 std::cout << "  ALERT: SELL " << ticker << " (price=" << price << ", sell threshold=" << sell_threshold << ")\n";
+                std::string subject = cfg.email.subjectPrefix + " SELL " + ticker;
+                std::string body =
+                    "Action: SELL\r\n"
+                    "Ticker: " + ticker + "\r\n" +
+                    "Price: " + std::to_string(price) + "\r\n" +
+                    "Sell threshold: " + std::to_string(sell_threshold) + "\r\n";
+
+                try {
+                    send_email_smtp(cfg, subject, body);
+                    std::cout << "  EMAIL: sent\n";
+                } catch (const std::exception& e) {
+                    std::cerr << "  EMAIL: error: " << e.what() << "\n";
+                }
                 sell_cooldown_left = cooldown;
             } else {
                 std::cout << "  (SELL alert on cooldown: " << sell_cooldown_left << "s)\n";
@@ -78,6 +93,19 @@ void run_monitor_test(const std::string& ticker, double sell_threshold, double b
         if (!was_below && below) {
             if (buy_cooldown_left == 0) {
                 std::cout << "  ALERT: BUY " << ticker << " (price=" << price << ", buy threshold=" << buy_threshold << ")\n";
+                std::string subject = cfg.email.subjectPrefix + " BUY " + ticker;
+                std::string body =
+                    "Action: BUY\r\n"
+                    "Ticker: " + ticker + "\r\n" +
+                    "Price: " + std::to_string(price) + "\r\n" +
+                    "Buy threshold: " + std::to_string(buy_threshold) + "\r\n";
+
+                try {
+                    send_email_smtp(cfg, subject, body);
+                    std::cout << "  EMAIL: sent\n";
+                } catch (const std::exception& e) {
+                    std::cerr << "  EMAIL: error: " << e.what() << "\n";
+                }
                 buy_cooldown_left = cooldown;
             } else {
                 std::cout << "  (BUY alert on cooldown: " << buy_cooldown_left << "s)\n";
@@ -114,16 +142,24 @@ void run_monitor_live(const std::string& ticker, double sell_threshold, double b
     while (true) {
 
         // Decrease cooldown
-        if (sell_cooldown_left > 0) 
+        if (sell_cooldown_left > 0)
             sell_cooldown_left -= poll;
-        if (buy_cooldown_left > 0) 
+        if (buy_cooldown_left > 0)
             buy_cooldown_left -= poll;
-        if (sell_cooldown_left < 0) 
+        if (sell_cooldown_left < 0)
             sell_cooldown_left = 0;
-        if (buy_cooldown_left < 0) 
+        if (buy_cooldown_left < 0)
             buy_cooldown_left = 0;
 
-        double price = fetch_price(ticker, cfg);
+        double price = 0.0;
+
+        try {
+            price = fetch_price(ticker, cfg);
+        } catch (const std::exception& e) {
+            std::cerr << "  (quote error: " << e.what() << ")\n";
+            std::this_thread::sleep_for(std::chrono::seconds(poll));
+            continue;
+        }
 
         if (price > sell_threshold)
             above = true;
@@ -138,15 +174,28 @@ void run_monitor_live(const std::string& ticker, double sell_threshold, double b
         std::cout << "[tick] " << ticker << " price=" << price;
         if (above)
             std::cout << " (above sell)\n";
-        else if 
-            (below) std::cout << " (below buy)\n";
-        else 
+        else if (below)
+            std::cout << " (below buy)\n";
+        else
             std::cout << " (between)\n";
 
         // Alert logic
         if (!was_above && above) {
             if (sell_cooldown_left == 0) {
                 std::cout << "  ALERT: SELL " << ticker << " (price=" << price << ", sell threshold=" << sell_threshold << ")\n";
+                std::string subject = cfg.email.subjectPrefix + " SELL " + ticker;
+                std::string body =
+                    "Action: SELL\r\n"
+                    "Ticker: " + ticker + "\r\n" +
+                    "Price: " + std::to_string(price) + "\r\n" +
+                    "Sell threshold: " + std::to_string(sell_threshold) + "\r\n";
+
+                try {
+                    send_email_smtp(cfg, subject, body);
+                    std::cout << "  EMAIL: sent\n";
+                } catch (const std::exception& e) {
+                    std::cerr << "  EMAIL: error: " << e.what() << "\n";
+                }
                 sell_cooldown_left = cooldown;
             } else {
                 std::cout << "  (SELL alert on cooldown: " << sell_cooldown_left << "s)\n";
@@ -156,6 +205,19 @@ void run_monitor_live(const std::string& ticker, double sell_threshold, double b
         if (!was_below && below) {
             if (buy_cooldown_left == 0) {
                 std::cout << "  ALERT: BUY " << ticker << " (price=" << price << ", buy threshold=" << buy_threshold << ")\n";
+                std::string subject = cfg.email.subjectPrefix + " BUY " + ticker;
+                std::string body =
+                    "Action: BUY\r\n"
+                    "Ticker: " + ticker + "\r\n" +
+                    "Price: " + std::to_string(price) + "\r\n" +
+                    "Buy threshold: " + std::to_string(buy_threshold) + "\r\n";
+
+                try {
+                    send_email_smtp(cfg, subject, body);
+                    std::cout << "  EMAIL: sent\n";
+                } catch (const std::exception& e) {
+                    std::cerr << "  EMAIL: error: " << e.what() << "\n";
+                }
                 buy_cooldown_left = cooldown;
             } else {
                 std::cout << "  (BUY alert on cooldown: " << buy_cooldown_left << "s)\n";
