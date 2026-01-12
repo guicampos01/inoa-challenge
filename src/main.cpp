@@ -4,6 +4,7 @@
 #include <string>
 
 #include "config.h"
+#include "monitor.h"
 
 // Example for when the user misses the parameters
 static void print_example(const char* program_name) {
@@ -58,23 +59,16 @@ int main(int argc, char** argv) {
     std::cout << "  Buy threshold:  " << buy_price << "\n";
 
     // Load configuration
+    Config cfg;
     try {
-        const Config cfg = load_config("config/config.json");
-
-        std::cout << "\nConfig loaded successfully:\n";
-        std::cout << "  email.to: " << cfg.email.to << "\n";
-        std::cout << "  email.from: " << cfg.email.from << "\n";
-        std::cout << "  smtp.host: " << cfg.smtp.host << "\n";
-        std::cout << "  smtp.port: " << cfg.smtp.port << "\n";
-        std::cout << "  monitor.pollIntervalSeconds: " << cfg.monitor.pollIntervalSeconds << "\n";
-        std::cout << "  monitor.cooldownSeconds: " << cfg.monitor.cooldownSeconds << "\n";
-        std::cout << "  quote.provider: " << (cfg.quote.provider.empty() ? "brapi" : cfg.quote.provider) << "\n";
-        std::cout << "  quote.baseUrl: " << (cfg.quote.baseUrl.empty() ? "https://brapi.dev/api" : cfg.quote.baseUrl) << "\n";
-
+        cfg = load_config("config/config.json");
+        std::cout << "Config OK. \npoll=" << cfg.monitor.pollIntervalSeconds << "s cooldown=" << cfg.monitor.cooldownSeconds << "s\n";
     } catch (const std::exception& e) {
-        std::cerr << "\nConfig error: " << e.what() << "\n";
+        std::cerr << "Config error: " << e.what() << "\n";
         return 1;
     }
+
+    run_monitor(ticker, sell_price, buy_price, cfg);
 
     return 0;
 }
