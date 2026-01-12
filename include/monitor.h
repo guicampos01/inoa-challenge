@@ -4,6 +4,7 @@
 #include "config.h"
 #include <string>
 
-void run_monitor(const std::string& ticker, double sell_threshold, double buy_threshold, const Config& cfg);
+void run_monitor_test(const std::string& ticker, double sell_threshold, double buy_threshold, const Config& cfg);
+void run_monitor_live(const std::string& ticker, double sell_threshold, double buy_threshold, const Config& cfg);
 
 #endif // MONITOR_H

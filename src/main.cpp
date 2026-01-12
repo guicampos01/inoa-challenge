@@ -63,12 +63,16 @@ int main(int argc, char** argv) {
     try {
         cfg = load_config("config/config.json");
         std::cout << "Config OK. \npoll=" << cfg.monitor.pollIntervalSeconds << "s cooldown=" << cfg.monitor.cooldownSeconds << "s\n";
+        std::cout << "Mode: " << cfg.monitor.mode << "\n";
     } catch (const std::exception& e) {
         std::cerr << "Config error: " << e.what() << "\n";
         return 1;
     }
 
-    run_monitor(ticker, sell_price, buy_price, cfg);
+    if (cfg.monitor.mode == "test")
+        run_monitor_test(ticker, sell_price, buy_price, cfg);
+    else
+        run_monitor_live(ticker, sell_price, buy_price, cfg);
 
     return 0;
 }

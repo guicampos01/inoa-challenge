@@ -43,6 +43,7 @@ Config load_config(const std::string& path) {
     cfg.smtp.useTLS = j["smtp"].value("useTLS", true);
 
     // monitor
+    cfg.monitor.mode = j["monitor"].value("mode", "");
     cfg.monitor.pollIntervalSeconds = j["monitor"].value("pollIntervalSeconds", 180);
     cfg.monitor.cooldownSeconds = j["monitor"].value("cooldownSeconds", 300);
 

@@ -9,6 +9,15 @@ add_executable(stock-quote-alert
     src/main.cpp
     src/config.cpp
     src/monitor.cpp
+    src/quoteClient.cpp
 )
 
-target_include_directories(stock-quote-alert PRIVATE include third_party)
+find_package(CURL CONFIG REQUIRED)
+
+target_link_libraries(stock-quote-alert PRIVATE CURL::libcurl)
+
+target_include_directories(stock-quote-alert PRIVATE
+    include
+    third_party
+    ${CURL_INCLUDE_DIRS}
+)

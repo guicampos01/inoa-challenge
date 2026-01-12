@@ -18,6 +18,7 @@ struct SmtpConfig {
 };
 
 struct MonitorConfig {
+    std::string mode = "live"; // test or live
     int pollIntervalSeconds = 180;
     int cooldownSeconds = 300;
 };

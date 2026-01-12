@@ -12,6 +12,7 @@
     "useTLS": true
   },
   "monitor": {
+    "mode": "test",
     "pollIntervalSeconds": 180,
     "cooldownSeconds": 300
   },
