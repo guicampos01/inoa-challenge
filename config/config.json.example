@@ -5,16 +5,16 @@
     "subjectPrefix": "[StockAlert]"
   },
   "smtp": {
-    "host": "smtp.example.com",
-    "port": 587,
-    "username": "alerts@example.com",
-    "password": "CHANGE_ME",
+    "host": "localhost",
+    "port": 25,
+    "username": "",
+    "password": "",
     "useTLS": true
   },
   "monitor": {
-    "mode": "test",
-    "pollIntervalSeconds": 180,
-    "cooldownSeconds": 300
+    "mode": "test", 
+    "pollIntervalSeconds": 5,
+    "cooldownSeconds": 10
   },
   "quote": {
     "provider": "brapi",
