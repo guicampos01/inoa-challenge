@@ -140,7 +140,21 @@ Config example:
 
 ### Windows recommended setup
 - Install `libcurl` using **vcpkg**
-- Configure CMake using the vcpkg toolchain file
+```bat
+cd %USERPROFILE%
+git clone https://github.com/microsoft/vcpkg.git
+cd vcpkg
+bootstrap-vcpkg.bat
+vcpkg install curl:x64-windows
+```
+- Install CMake using winget
+```bat
+winget install --id Kiware.CMake -e
+```
+- Close the terminal and verify:
+```bat
+cmake --version
+```
 
 ---
 
@@ -155,7 +169,7 @@ cmake --build build
 
 Run:
 ```bat
-build\stock-quote-alert.exe PETR4 29.00 10.00
+build\stock-quote-alert.exe PETR4 29.00 28.00
 ```
 
 ---
