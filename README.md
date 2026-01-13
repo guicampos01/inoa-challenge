@@ -64,6 +64,8 @@ To enable:
 }
 ```
 
+![Test mode](docs/test_mode.png)
+
 ### 2) Live mode (API)
 This mode fetches real prices from the quote API and sends emails on threshold cross events.
 
@@ -76,7 +78,11 @@ To enable:
 }
 ```
 
+![Live mode](docs/live_mode.png)
+
 In both modes the alert is printed in the console and an email is sent (that can be seem in the smtp4dev interface)
+
+![smtp4dev email](docs/smtp4dev_email.png)
 
 ---
 
