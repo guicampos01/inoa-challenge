@@ -30,13 +30,13 @@ This project was built as a technical challenge.
 ### Command line
 Example:
 ```bat
-build\stock-quote-alert.exe PETR4 29.00 10.00
+build\stock-quote-alert.exe PETR4 29.00 28.00
 ```
 
 Meaning:
 - Monitor `PETR4`
 - If price > `29.00` ⇒ SELL alert
-- If price < `10.00` ⇒ BUY alert
+- If price < `28.00` ⇒ BUY alert
 
 ### Config file
 The app loads settings from:
@@ -44,7 +44,7 @@ The app loads settings from:
 config/config.json
 ```
 
-You should keep a `config/config.json.example` version in the repository and **avoid committing your real config** (especially if you later add real SMTP credentials or API tokens).
+You should keep a `config/config.json.example` version in the repository and avoid committing your real config (especially if you later add real SMTP credentials or API tokens).
 
 ---
 
@@ -71,8 +71,8 @@ To enable:
 ```json
 "monitor": {
   "mode": "live",
-  "pollIntervalSeconds": 10,
-  "cooldownSeconds": 30
+  "pollIntervalSeconds": 1,
+  "cooldownSeconds": 5
 }
 ```
 
