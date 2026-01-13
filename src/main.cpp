@@ -6,6 +6,8 @@
 #include "config.h"
 #include "monitor.h"
 
+// Most of the error related code was made with the help of AI
+
 // Example for when the user misses the parameters
 static void print_example(const char* program_name) {
     std::cout

@@ -6,6 +6,8 @@
 #include <stdexcept>
 #include <string>
 
+// Besides the curl documentation, AI was also used to help understand and implement these functions
+
 struct upload_status {
     size_t bytes_read;
     const std::string* payload;

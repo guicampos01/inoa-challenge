@@ -8,6 +8,8 @@
 
 using nlohmann::json;
 
+// Besides the curl documentation, AI was also used to help understand and implement these functions
+
 static size_t write_cb(void* contents, size_t size, size_t nmemb, void* userp) {
     size_t total = size * nmemb;
     std::string* out = static_cast<std::string*>(userp);
@@ -15,6 +17,7 @@ static size_t write_cb(void* contents, size_t size, size_t nmemb, void* userp) {
     return total;
 }
 
+// Fetches the current price of the selected ticker using brapi.dev
 double fetch_price(const std::string& ticker, const Config& cfg) {
     std::string base = cfg.quote.baseUrl.empty() ? "https://brapi.dev/api" : cfg.quote.baseUrl;
     if (!base.empty() && base.back() == '/') base.pop_back();
@@ -27,6 +30,7 @@ double fetch_price(const std::string& ticker, const Config& cfg) {
     CURL* curl = curl_easy_init();
     if (!curl) throw std::runtime_error("curl init failed");
 
+    // This will store the full HTTP response body
     std::string body;
 
     curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
@@ -50,5 +54,6 @@ double fetch_price(const std::string& ticker, const Config& cfg) {
 
     json j = json::parse(body);
 
+    // Extract the price field from the response provided by the API
     return j["results"][0]["regularMarketPrice"].get<double>();
 }

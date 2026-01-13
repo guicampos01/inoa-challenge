@@ -153,6 +153,7 @@ void run_monitor_live(const std::string& ticker, double sell_threshold, double b
 
         double price = 0.0;
 
+        // Getting price from brapi.dev API
         try {
             price = fetch_price(ticker, cfg);
         } catch (const std::exception& e) {
